@@ -1,0 +1,105 @@
+﻿<Page
+    x:Class="WineClub.Views.EventDetailedPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:WineClub.ViewModels"
+    mc:Ignorable="d"
+    Style="{StaticResource PageStyle}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ItemGrid" x:DataType="viewmodels:AddWineViewModel">
+            <Grid Width="350" ColumnSpacing="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{x:Bind Name, Mode=OneWay}" Margin="10, 10, 10, 10" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold"/>
+                <TextBlock Grid.Row="1" Text="{x:Bind Winery, Mode=OneWay}" Margin="10" HorizontalAlignment="Center"/>
+                <Image Grid.Row="2" Source="{x:Bind Image, Mode=OneWay}" Height="200"/>
+                <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Rating (" FontSize="15" FontWeight="Bold" HorizontalTextAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Ratings}" FontSize="15" FontWeight="Bold" HorizontalTextAlignment="Center"/>
+                        <TextBlock Text=")" FontSize="15" FontWeight="Bold" HorizontalTextAlignment="Center"/>
+                    </StackPanel>
+                    <RatingControl Value="{x:Bind Ratings}" IsClearEnabled="False" IsReadOnly="True" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <ScrollViewer>
+        <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
+            <Grid
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                <Grid Padding="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="300"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Bind ViewModel.WineEvent.Title, Mode=OneWay}" Style="{ThemeResource TitleTextBlockStyle}" Grid.Column="0"/>
+                        <CommandBar 
+                        Background="Transparent"
+                        DefaultLabelPosition="Right"
+                        Grid.Column="1">
+                            <AppBarButton Icon="Edit" Label="Edit Wine Event" Command="{x:Bind ViewModel.EditEventCommand}" Visibility="{x:Bind ViewModel.AdminRole, Mode=OneWay}"/>
+                            <AppBarButton Icon="Delete" Label="Delete Wine Event" Command="{x:Bind ViewModel.DeleteEventCommand}" Visibility="{x:Bind ViewModel.AdminRole, Mode=OneWay}"/>
+                            <AppBarButton Icon="Accept" Label="Attend Wine Event" Command="{x:Bind ViewModel.AttendEventCommand}" Visibility="{x:Bind ViewModel.AttendingVisibilty, Mode=OneWay}"/>
+                            <AppBarButton Icon="Cancel" Label="Not Attend Wine Event" Command="{x:Bind ViewModel.StopAttendEventCommand}" Visibility="{x:Bind ViewModel.StopAttendVisibilty, Mode=OneWay}"/>
+                        </CommandBar>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="500"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Description" Style="{StaticResource DetailSubTitleStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.WineEvent.Description, Mode=OneWay}" Margin="0, 0, 0, 10"/>
+                            <TextBlock Text="City" Style="{StaticResource DetailSubTitleStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.WineEvent.City, Mode=OneWay}" Margin="0, 0, 0, 10"/>
+                            <TextBlock Text="Street Address" Style="{StaticResource DetailSubTitleStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.WineEvent.StreetAddress, Mode=OneWay}" Margin="0, 0, 0, 10"/>
+                            <TextBlock Text="Date and Time" Style="{StaticResource DetailSubTitleStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.WineEvent.DateTime.DateTime, Mode=OneWay}" Margin="0, 0, 0, 10"/>
+                            <TextBlock Text="Participants" Style="{StaticResource DetailSubTitleStyle}" />
+                            <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 10">
+                                <TextBlock Text="{x:Bind ViewModel.WineEvent.Participants, Mode=OneWay}"/>
+                                <TextBlock Text=" / " Margin="0, 0, 5, 0"/>
+                                <TextBlock Text="{x:Bind ViewModel.WineEvent.MaxPersons, Mode=OneWay}"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                        <Image Source="{x:Bind ViewModel.WineEvent.MapImage, Mode=OneWay}" 
+                           Height="400" 
+                           Grid.Column="1"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"/>
+                    </Grid>
+                    <StackPanel Grid.Row="2" Margin="0, 20, 0, 0">
+                        <TextBlock Text="Wine Menu:" FontSize="20"/>
+
+                        <GridView
+                            x:Name="ContentGridView"
+                            ItemsSource="{x:Bind ViewModel.Wines, Mode=OneWay}"
+                            ItemTemplate="{StaticResource ItemGrid}"
+                            ItemClick="{x:Bind ViewModel.ContentGridViewItemClick}"    
+                            IsItemClickEnabled="True"
+                            SelectionMode="Single"
+                            FlowDirection="LeftToRight"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Page>

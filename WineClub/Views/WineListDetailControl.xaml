@@ -1,0 +1,119 @@
+﻿<UserControl
+    x:Class="WineClub.Views.WineListDetailControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:WineClub.Helpers"
+    xmlns:models="using:WineClub.Core.Dtos"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <helpers:ListStringJoinConverter x:Key="ListStringJoinConverter" />
+        <DataTemplate x:Key="ItemRepeater" x:DataType="models:RatingDto">
+
+            <Grid>
+                <StackPanel BorderBrush="Gray" BorderThickness="0, 0, 0, 1" Margin="0, 0, 0, 10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind RatedBy.Username}" Margin="0, 0, 10, 0" FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind DateOfRating.DateTime}" Margin="0, 0, 10, 0" FontWeight="Bold"/>
+                        <RatingControl 
+                                Value="{x:Bind Score}"
+                                IsClearEnabled="False" 
+                                IsReadOnly="True" 
+                                HorizontalAlignment="Left"/>
+                    </StackPanel>
+                    <TextBlock Text="{x:Bind ReviewText}" Margin="0, 0, 0, 20"/>
+                </StackPanel>
+            </Grid>
+
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer
+                Name="ForegroundElement"
+                VerticalScrollMode="Enabled"
+                Padding="20"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                IsTabStop="True">
+            <Grid HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock
+                        Text="{x:Bind ListDetailsMenuItem.Name, Mode=OneWay}"
+                        Style="{ThemeResource TitleTextBlockStyle}" 
+                        Margin="0, 0, 0, 10"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ListDetailsMenuItem.Ratings, Mode=OneWay}" FontSize="22" FontWeight="Bold" Margin="0, 0, 5, 0"/>
+                        <StackPanel>
+                            <RatingControl 
+                                Value="{x:Bind ListDetailsMenuItem.Ratings, Mode=OneWay}"
+                                IsReadOnly="True" 
+                                HorizontalAlignment="Left"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock HorizontalAlignment="Center" Text="{x:Bind ListDetailsMenuItem.RatingsList.Count, Mode=OneWay}" Margin="0, 0, 5, 20"/>
+                                <TextBlock Text="ratings"/>
+
+                            </StackPanel>
+
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock Text="Year" Style="{StaticResource DetailSubTitleStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.Year, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" Margin="0, 0, 0, 10"/>
+                    <TextBlock Text="Winery" Style="{StaticResource DetailSubTitleStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.Winery, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" Margin="0, 0, 0, 10"/>
+                    <TextBlock Text="Wine Type" Style="{StaticResource DetailSubTitleStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.SelectedWineType, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" Margin="0, 0, 0, 10"/>
+                    <TextBlock Text="Region(s)" Style="{StaticResource DetailSubTitleStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.Regions, Converter={StaticResource ListStringJoinConverter}, Mode=OneWay}"/>
+                    <TextBlock Text="Grape(s)" Style="{StaticResource DetailSubTitleStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.Grapes, Converter={StaticResource ListStringJoinConverter}, Mode=OneWay}"/>
+
+
+                    <TextBlock Text="Rate Wine:" FontSize="20" Margin="0, 20, 0, 0"/>
+                    <RatingControl 
+                            Value="{x:Bind ListDetailsMenuItem.Score, Mode=TwoWay}"
+                            IsClearEnabled="False" 
+                            IsReadOnly="False" 
+                            PlaceholderValue="{x:Bind ListDetailsMenuItem.Ratings}"
+                            HorizontalAlignment="Left"/>
+                    <TextBox 
+                            PlaceholderText="Write a review"
+                            Text="{x:Bind ListDetailsMenuItem.ReviewText, Mode=TwoWay}"
+                            HorizontalAlignment="Left"
+                            Width="300" 
+                            MinHeight="100"
+                            MaxHeight="600"
+                            TextWrapping="Wrap" 
+                            AcceptsReturn="True"/>
+
+                    <Button 
+                            Content="Add review" 
+                            Command="{x:Bind ListDetailsMenuItem.AddReviewCommand, Mode=OneWay}" 
+                            IsEnabled="{x:Bind ListDetailsMenuItem.ReviewButton, Mode=OneWay}"
+                        Margin="0, 20, 0 ,0"/>
+
+                    <TextBlock Text="Reviews:" FontSize="20" Margin="0, 30, 0, 10"/>
+                    <ItemsRepeater 
+                        ItemsSource="{x:Bind ListDetailsMenuItem.RatingsList, Mode=OneWay}"
+                        ItemTemplate="{StaticResource ItemRepeater}"/>
+
+                </StackPanel>
+                <Grid Grid.Column="1" VerticalAlignment="Top">
+                    <Image 
+                        x:Name="CurrentImage" 
+                        Source="{x:Bind ListDetailsMenuItem.Image, Mode=OneWay}" 
+                        Stretch="Uniform" 
+                        Width="350" 
+                        Height="500"/>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

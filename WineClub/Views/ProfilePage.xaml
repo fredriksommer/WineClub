@@ -1,0 +1,102 @@
+﻿<Page
+    x:Class="WineClub.Views.ProfilePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:WineClub.ViewModels"
+    mc:Ignorable="d"
+    Style="{StaticResource PageStyle}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ItemGrid" x:DataType="viewmodels:AddWineViewModel">
+            <Grid Width="350" ColumnSpacing="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{x:Bind Name, Mode=OneWay}" Margin="10, 10, 10, 10" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold"/>
+                <TextBlock Grid.Row="1" Text="{x:Bind Winery, Mode=OneWay}" Margin="10" HorizontalAlignment="Center"/>
+                <Image Grid.Row="2" Source="{x:Bind Image, Mode=OneWay}" Height="200"/>
+                <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Rating (" FontSize="15" FontWeight="Bold" HorizontalTextAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Ratings}" FontSize="15" FontWeight="Bold" HorizontalTextAlignment="Center"/>
+                        <TextBlock Text=")" FontSize="15" FontWeight="Bold" HorizontalTextAlignment="Center"/>
+                    </StackPanel>
+                    <RatingControl Value="{x:Bind Ratings}" IsClearEnabled="False" IsReadOnly="True" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
+        <ScrollViewer>
+            <Grid
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+            Margin="{StaticResource SmallLeftRightMargin}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <CommandBar Background="Transparent" DefaultLabelPosition="Right">
+                        <AppBarButton Icon="Edit" Label="Edit Profile" Command="{x:Bind ViewModel.EditProfileCommand}"/>
+                    </CommandBar>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <StackPanel Padding="10">
+                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 40">
+                            <TextBlock FontSize="20" Text="Welcome, "/>
+                            <TextBlock FontSize="20" Text="{x:Bind ViewModel.User.FirstName}" Margin="3, 0, 5 ,0"/>
+                            <TextBlock FontSize="20" Text="{x:Bind ViewModel.User.LastName}"/>
+                        </StackPanel>
+
+
+                        <TextBlock Text="My Next Event:" 
+                           Style="{StaticResource DetailSubTitleStyle}"
+                           Visibility="{x:Bind ViewModel.NextEventVisibilty, Mode=OneWay}"/>
+                        <Grid ColumnSpacing="10" 
+                      Width="500" 
+                      HorizontalAlignment="Left"
+                      Margin="0, 20, 0, 20" 
+                      Visibility="{x:Bind ViewModel.NextEventVisibilty, Mode=OneWay}">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="{x:Bind ViewModel.NextEvent.Title, Mode=OneWay}" FontSize="20" Margin="0, 0, 0, 10"/>
+                                <TextBlock Text="{x:Bind ViewModel.NextEvent.DateTime.DateTime, Mode=OneWay}"/>
+
+                                <Button Content="Read More" 
+                                        Margin="0, 10, 0, 0" 
+                                        Width="150" Command="{x:Bind ViewModel.ToToEventCommand, Mode=OneWay}" 
+                                        CommandParameter="{x:Bind ViewModel.NextEvent}"/>
+                            </StackPanel>
+                            <Image Grid.Column="1" Source="{x:Bind ViewModel.NextEvent.MapImage, Mode=OneWay}" Height="250" HorizontalAlignment="Right"/>
+                        </Grid>
+
+
+                        <TextBlock Text="My Rated Wines:" 
+                           Style="{StaticResource DetailSubTitleStyle}"
+                           Visibility="{x:Bind ViewModel.MyReviewsVisibilty, Mode=OneWay}"/>
+
+                        <GridView
+                    x:Name="ContentGridView"
+                    ItemsSource="{x:Bind ViewModel.MyReviews, Mode=OneWay}"
+                    ItemTemplate="{StaticResource ItemGrid}"  
+                    ItemClick="{x:Bind ViewModel.ContentGridViewItemClick}"
+                    IsItemClickEnabled="True"
+                    SelectionMode="Single"
+                    FlowDirection="LeftToRight"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

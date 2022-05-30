@@ -1,0 +1,132 @@
+﻿<Page
+    x:Class="WineClub.Views.WineListPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:views="using:WineClub.Views"
+    xmlns:viewmodels="using:WineClub.ViewModels"
+    mc:Ignorable="d"
+    xmlns:behaviors="using:WineClub.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
+    Style="{StaticResource PageStyle}">
+    <Page.Resources>
+        <DataTemplate x:Key="ItemTemplate" x:DataType="viewmodels:AddWineViewModel">
+            <Grid Height="60">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="{StaticResource SmallLeftMargin}"
+                    VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind Name}" Style="{StaticResource ListTitleStyle}" />
+                    <TextBlock Text="{x:Bind Year}" Style="{StaticResource ListSubTitleStyle}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DetailsTemplate">
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <views:WineListDetailControl ListDetailsMenuItem="{Binding}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NoSelectionContentTemplate">
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <TextBlock
+                    x:Uid="WineList_NoSelection"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    TextAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ListHeaderTemplate">
+            <Grid Height="40">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{StaticResource ListTitleStyle}"
+                    Text="{Binding}" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="MinimalListHeaderTemplate">
+            <Grid Height="40">
+                <TextBlock
+                    Margin="96,0,0,0"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource ListTitleStyle}"
+                    Text="{Binding}" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid HorizontalAlignment="Stretch"
+              Margin="0 0 0 16"
+              CornerRadius="4"
+              Height="52"
+              Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <AutoSuggestBox 
+                        Margin="0, 20, 0, 0"
+                        Width="200"
+                        PlaceholderText="Search for wine" 
+                        Grid.Column="0"
+                        QueryIcon="Find"
+                        TextChanged="{x:Bind ViewModel.AutoSuggestBoxWine_TextChanged}" 
+                        DisplayMemberPath="Name"/>
+
+            <CommandBar Background="Transparent"
+                        DefaultLabelPosition="Right"
+                        Grid.Column="1">
+                <AppBarButton Icon="Add" Label="Add Wine" Command="{x:Bind ViewModel.AddCommand}"/>
+                <AppBarButton Icon="Edit" Label="Edit Wine" Command="{x:Bind ViewModel.EditCommand}" CommandParameter="{x:Bind ViewModel.Selected, Mode=OneWay}"/>
+                <AppBarButton Icon="Delete" Label="Delete Wine" Command="{x:Bind ViewModel.DeleteCommand}" CommandParameter="{x:Bind ViewModel.Selected, Mode=OneWay}"/>
+            </CommandBar>
+        </Grid>
+        
+        <Grid x:Name="ContentArea" Grid.Row="1">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!--641 is the default CompactModeThresholdWidth in NavigationView -->
+                        <AdaptiveTrigger MinWindowWidth="641" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ListDetailsViewControl.ListHeaderTemplate" Value="{StaticResource ListHeaderTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+            <controls:ListDetailsView
+            x:Uid="WineList"
+            x:Name="ListDetailsViewControl"
+            BackButtonBehavior="Automatic"
+            BorderBrush="Transparent"
+            DetailsTemplate="{StaticResource DetailsTemplate}"
+            ItemsSource="{x:Bind ViewModel.Wines}"
+            ItemTemplate="{StaticResource ItemTemplate}"
+            NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
+            SelectedItem="{x:Bind ViewModel.Selected, Mode=TwoWay}"
+            ViewStateChanged="OnViewStateChanged"
+            ListHeaderTemplate="{StaticResource MinimalListHeaderTemplate}"
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" >
+
+            </controls:ListDetailsView>
+
+    </Grid>
+    </Grid>
+</Page>
